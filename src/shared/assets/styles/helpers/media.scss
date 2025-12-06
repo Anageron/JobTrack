@@ -1,0 +1,141 @@
+/// Точки останова (breakpoints) для адаптивной вёрстки.
+/// Используются в медиазапросах и миксинах ниже.
+/// Обрати внимание: значения заданы как максимальные ширины для "меньше или равно".
+$laptop: 1440px; // Широкие ноутбуки и десктопы
+$tablet: 1023px; // Планшеты в портретной ориентации
+$mobile: 767px; // Мобильные устройства
+$mobile-s: 480px; // Маленькие мобильные устройства (iPhone SE и т.п.)
+
+/// Применяет стили на экранах ШИРЕ, чем `$laptop` (1440px).
+/// Полезно для десктоп-специфичных улучшений.
+///
+/// @example
+///   .container {
+///     width: 1200px;
+///     @include laptop-above {
+///       width: 1400px;
+///     }
+///   }
+@mixin laptop-above {
+  @media (width > $laptop) {
+    @content;
+  }
+}
+
+/// Применяет стили на экранах ШИРИНОЙ ДО $laptop включительно (≤1440px).
+/// Основной диапазон для ноутбуков и планшетов в альбомной ориентации.
+///
+/// @example
+///   .sidebar {
+///     display: block;
+///     @include laptop {
+///       display: none;
+///     }
+///   }
+@mixin laptop {
+  @media (width <= $laptop) {
+    @content;
+  }
+}
+
+/// Применяет стили на экранах ШИРЕ, чем `$tablet` (1023px).
+/// Используется редко — чаще для отмены планшетных стилей на больших экранах.
+@mixin tablet-above {
+  @media (width > $tablet) {
+    @content;
+  }
+}
+
+/// Применяет стили на экранах ШИРИНОЙ ДО $tablet включительно (≤1023px).
+/// Основной диапазон для планшетов и мобильных в альбомной ориентации.
+///
+/// @example
+///   .grid {
+///     grid-template-columns: repeat(3, 1fr);
+///     @include tablet {
+///       grid-template-columns: repeat(2, 1fr);
+///     }
+///   }
+@mixin tablet {
+  @media (width <= $tablet) {
+    @content;
+  }
+}
+
+/// Применяет стили на экранах ШИРЕ, чем `$mobile` (767px).
+/// Редко используется — для "не-мобильных" стилей.
+@mixin mobile-above {
+  @media (width > $mobile) {
+    @content;
+  }
+}
+
+/// Применяет стили на экранах ШИРИНОЙ ДО $mobile включительно (≤767px).
+/// Основной мобильный диапазон.
+///
+/// @example
+///   .header {
+///     padding: 16px;
+///     @include mobile {
+///       padding: 12px;
+///     }
+///   }
+@mixin mobile {
+  @media (width <= $mobile) {
+    @content;
+  }
+}
+
+/// Применяет стили на экранах ШИРЕ, чем `$mobile-s` (480px).
+/// Для десктопов, планшетов и больших мобильных.
+@mixin mobile-s-above {
+  @media (width > $mobile-s) {
+    @content;
+  }
+}
+
+/// Применяет стили на экранах ШИРИНОЙ ДО $mobile-s включительно (≤480px).
+/// Для самых маленьких устройств.
+///
+/// @example
+///   .title {
+///     font-size: 24px;
+///     @include mobile-s {
+///       font-size: 20px;
+///     }
+///   }
+@mixin mobile-s {
+  @media (width <= $mobile-s) {
+    @content;
+  }
+}
+
+/// Универсальный миксин для hover-эффектов с поддержкой мобильных устройств.
+/// На устройствах с hover (мышка) применяет `:hover`.
+/// На тач-устройствах (где hover недоступен) — применяет `:active`,
+/// чтобы эффект срабатывал при нажатии.
+///
+/// @param {Boolean} $hasActiveEffectOnMobile [true] - Если true, добавляет `:active` для тач-устройств.
+///
+/// @example
+///   .button {
+///     background: var(--color-gray-100);
+///     @include hover {
+///       background: var(--color-primary);
+///     }
+///   }
+@mixin hover($hasActiveEffectOnMobile: true) {
+  @media (any-hover: hover) {
+    &:hover {
+      @content;
+    }
+  }
+
+  @if ($hasActiveEffectOnMobile) {
+    @media (any-hover: none) {
+      &:active {
+        @content;
+      }
+    }
+  }
+}

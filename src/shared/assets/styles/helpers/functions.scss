@@ -1,0 +1,43 @@
+@use 'constants' as *;
+@use 'sass:math';
+
+/// Генерирует резиновое (адаптивное) значение с использованием CSS `clamp()`.
+/// Плавно интерполирует размер между `$min` и `$max` в зависимости от ширины viewport.
+/// Использует линейную регрессию для вычисления формулы `rem + vw`.
+///
+/// @param {Number} $max - Максимальный размер в пикселях (на широком экране, до $container-desktop-width = 1600px)
+/// @param {Number} $min - Минимальный размер в пикселях (на узком экране: 390px или $container-laptop-width = 1280px)
+/// @param {Boolean} $isEndOfLaptop [false] - Если true, нижняя граница — 1280px (а не 390px)
+///
+/// @return {String} Значение вида `clamp(minRem, interceptRem + slopeVw, maxRem)`
+///
+/// @example
+///   font-size: fluid(48, 24); // от 24px (на мобиле) до 48px (на десктопе)
+///   margin: fluid-to-laptop(32, 16); // от 16px до 32px между 1280px и 1600px
+
+@function fluid($max: 100, $min: 10, $isEndOfLaptop: false) {
+  $maxViewportWidth: $container-desktop-width;
+  $minViewportWidth: 390;
+
+  @if ($isEndOfLaptop) {
+    $minViewportWidth: $container-laptop-width;
+  }
+
+  $maxSize: math.div($max, 16);
+  $minSize: math.div($min, 16);
+  $maxWidth: math.div($maxViewportWidth, 16);
+  $minWidth: math.div($minViewportWidth, 16);
+
+  $slope: math.div(($maxSize - $minSize), ($maxWidth - $minWidth));
+  $yAxisIntersections: -$minWidth * $slope + $minSize;
+
+  @return clamp(
+    #{$minSize * 1rem},
+    #{$yAxisIntersections * 1rem} + #{$slope * 100vw},
+    #{$maxSize * 1rem}
+  );
+}
+
+@function fluid-to-laptop($max: 100, $min: 10) {
+  @return fluid($max, $min, true);
+}

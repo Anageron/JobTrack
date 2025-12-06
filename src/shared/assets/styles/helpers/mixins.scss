@@ -1,0 +1,109 @@
+@use 'functions' as *;
+
+/// Устанавливает резиновый (адаптивный) размер шрифта с использованием функции `fluid()`.
+/// Размер плавно меняется между `$min` и `$max` в зависимости от ширины экрана.
+///
+/// @param {Number} $max [48] - Максимальный размер шрифта в пикселях (на десктопе, до 1600px)
+/// @param {Number} $min [16] - Минимальный размер шрифта в пикселях (на мобильном, от 390px)
+///
+/// @example
+///   .title {
+///     @include fluid-text(64, 24);
+///   }
+@mixin fluid-text($max: 48, $min: 16) {
+  font-size: fluid($max, $min);
+}
+
+/// Центрирует дочерние элементы по горизонтали и вертикали с помощью Flexbox.
+///
+/// @param {Boolean} $isInline [false] - Если true, использует `inline-flex` вместо `flex`
+///
+/// @example
+///   .container { @include flex-center; }
+///   .badge { @include flex-center(true); }
+@mixin flex-center($isInline: false) {
+  @if ($isInline) {
+    display: inline-flex;
+  } @else {
+    display: flex;
+  }
+
+  justify-content: center;
+  align-items: center;
+}
+
+/// Растягивает абсолютно позиционированный элемент на всю область родителя.
+/// Аналог `top: 0; right: 0; bottom: 0; left: 0;`.
+///
+/// @example
+///   .overlay { @include abs-cover; }
+@mixin abs-cover {
+  position: absolute;
+  inset: 0;
+}
+
+/// Позиционирует элемент точно по центру родителя.
+/// Использует `top: 50%`, `left: 50%` и `translate: -50% -50%`.
+///
+/// @example
+///   .modal { @include abs-center; }
+@mixin abs-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+}
+
+/// Центрирует элемент по горизонтали внутри родителя.
+/// Использует `left: 50%` и `translate: -50%`.
+///
+/// @example
+///   .tooltip { @include abs-x; }
+@mixin abs-x {
+  position: absolute;
+  left: 50%;
+  translate: -50%;
+}
+
+/// Центрирует элемент по вертикали внутри родителя.
+/// Использует `top: 50%` и `translate: 0 -50%`.
+///
+/// @example
+///   .vertical-badge { @include abs-y; }
+@mixin abs-y {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+}
+
+/// Задаёт одинаковую ширину и высоту элементу (делает его квадратным).
+///
+/// @param {Length} $size - Желаемый размер стороны (например, `40px`, `2rem`)
+///
+/// @example
+///   .icon { @include square(24px); }
+@mixin square($size) {
+  width: $size;
+  height: $size;
+}
+
+/// Стилизует фокус для `:focus-visible`, улучшая доступность.
+/// Использует контрастный `outline` без анимации.
+///
+/// @example
+///   button:focus-visible { @include focus-visible; }
+@mixin focus-visible {
+  outline: 2px dashed var(--color-white);
+  outline-offset: 4px;
+  transition-duration: 0s !important;
+}
+
+/// Визуально обозначает отключённое состояние элемента.
+/// Уменьшает прозрачность и запрещает взаимодействие курсора.
+///
+/// @example
+///   button:disabled { @include disabled; }
+@mixin disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

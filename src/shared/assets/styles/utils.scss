@@ -1,0 +1,58 @@
+@use 'helpers' as *;
+
+/// Универсальный контейнер с максимальной шириной и адаптивными отступами.
+/// Использует резиновую ширину из `--container-width` и отступы `--container-padding-x`.
+/// Центрируется автоматически.
+///
+/// @example
+///   <div class="container">Содержимое</div>
+.container {
+  width: 100%;
+  max-width: calc(var(--container-width) + var(--container-padding-x) * 2);
+  margin-inline: auto;
+  padding-inline: var(--container-padding-x);
+}
+
+/// Скрывает элемент на экранах ШИРЕ планшета (≥1024px).
+/// Отображается **только на планшетах и мобильных** (≤1023px).
+///
+/// @example
+///   <div class="visible-tablet">Только для планшетов и мобил</div>
+.visible-tablet {
+  @include tablet-above {
+    display: none !important;
+  }
+}
+
+/// Скрывает элемент на экранах ШИРИНОЙ ДО планшета включительно (≤1023px).
+/// Отображается **только на десктопах и широких ноутбуках** (>1023px).
+///
+/// @example
+///   <div class="hidden-tablet">Скрыто на планшетах и мобилах</div>
+.hidden-tablet {
+  @include tablet {
+    display: none !important;
+  }
+}
+
+/// Скрывает элемент на экранах ШИРЕ мобильного (≥768px).
+/// Отображается **только на мобильных** (≤767px).
+///
+/// @example
+///   <div class="visible-mobile">Только для мобильных устройств</div>
+.visible-mobile {
+  @include mobile-above {
+    display: none !important;
+  }
+}
+
+/// Скрывает элемент на экранах ШИРИНОЙ ДО мобильного включительно (≤767px).
+/// Отображается **только на планшетах и десктопах** (>767px).
+///
+/// @example
+///   <div class="hidden-mobile">Скрыто на мобильных</div>
+.hidden-mobile {
+  @include mobile {
+    display: none !important;
+  }
+}

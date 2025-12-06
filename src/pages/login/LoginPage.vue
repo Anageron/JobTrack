@@ -7,7 +7,7 @@ const email = ref('')
 const router = useRouter()
 const userStore = useUserStore()
 
-const handleSubmit = () => {
+function handleSubmit() {
   if (userStore.login(email.value)) {
     router.push('/')
   }
@@ -16,19 +16,30 @@ const handleSubmit = () => {
 
 <template>
   <div class="login-page">
+    <h2 class="title">
+      Здарова
+    </h2>
     <div class="card">
       <h2>Войти в JobTrack</h2>
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
-          <input v-model="email" type="email" placeholder="Email" required />
+          <input v-model="email" type="email" placeholder="Email" required>
         </div>
-        <button type="submit" class="btn">Продолжить</button>
+        <button type="submit" class="btn">
+          Продолжить
+        </button>
       </form>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+@use '@/shared/assets/styles/helpers' as *;
+.title {
+  font-size: fluid(48, 24);
+  margin: fluid-to-laptop(32, 16) 0;
+}
+
 .login-page {
   display: flex;
   justify-content: center;
