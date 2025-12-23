@@ -1,32 +1,32 @@
-import Cookies from 'js-cookie'
-// src/entities/user/model/userStore.ts
+import type { IUser } from '../types/user'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-
-interface User {
-  id: string
-  email: string
-}
+import { deleteCookie, getCookie, getCookieOptions, setCookie } from '@/shared/lib/cookies'
 
 const COOKIE_NAME = 'jobtrack_session'
 
 export const useUserStore = defineStore('user', () => {
-  const user = ref<User | null>(null)
+  const user = ref<IUser | null>(null)
   const isAuthenticated = ref(false)
 
   const logout = () => {
     user.value = null
     isAuthenticated.value = false
-    Cookies.remove(COOKIE_NAME)
+    deleteCookie('jobtrack_session')
   }
 
-  const init = () => {
-    const cookie = Cookies.get(COOKIE_NAME)
+  const initAuth = () => {
+    const cookie = getCookie(COOKIE_NAME)
     if (cookie) {
       try {
         const session = JSON.parse(cookie)
-        user.value = session.user
-        isAuthenticated.value = session.isAuthenticated
+        if (session.isAuthenticated && session.user) {
+          isAuthenticated.value = true
+          user.value = session.user
+        }
+        else {
+          logout()
+        }
       }
       catch {
         logout()
@@ -34,19 +34,17 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const login = (email: string) => {
-    const userId = `user-${Date.now()}`
-    const session = {
-      user: { id: userId, email },
+  const login = (email: string, name: string) => {
+    const sessionData = {
       isAuthenticated: true,
+      user: { email, name },
     }
-    Cookies.set(COOKIE_NAME, JSON.stringify(session), { expires: 7 })
-    user.value = session.user
+    setCookie(COOKIE_NAME, JSON.stringify(sessionData), getCookieOptions())
     isAuthenticated.value = true
-    return true
+    user.value = { email, name }
   }
 
-  init()
+  initAuth()
 
   return {
     user,

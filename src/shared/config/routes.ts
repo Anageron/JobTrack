@@ -3,12 +3,8 @@ import type { RouteRecordRaw } from 'vue-router'
 
 export const routes: RouteRecordRaw[] = [
   {
-    path: '/login',
-    component: () => import('@/pages/login/LoginPage.vue'),
+    path: '/',
+    component: () => import('@/pages/MainPage.vue'),
     meta: { guestOnly: true },
-  },
-  {
-    path: '/:pathMatch(.*)*',
-    redirect: '/login',
   },
 ]

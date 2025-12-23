@@ -8,12 +8,13 @@ html {
 
 body {
   @include fluid-text(18, 14);
-
+  margin: 20px 20px;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   font-family: var(--font-family-base);
-  color: var(--color-red-60);
-  background-color: var(--color-black-08);
+  color: var(--color-black-30);
+  background-color: var(--color-gray-90);
 }
 
 main {
@@ -91,7 +92,7 @@ a {
   color: inherit;
 
   @include hover {
-    color: var(--color-red-45);
+    color: var(--color-blue-45);
   }
 
   &[class] {
