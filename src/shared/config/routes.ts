@@ -1,7 +1,8 @@
 import type { RouteRecordRaw } from 'vue-router'
 
-const HomePage = () => import('@/pages/main/MainPage.vue')
+const MainPage = () => import('@/pages/main/MainPage.vue')
 const LoginPage = () => import('@/pages/login/LoginPage.vue')
+const RegisterPage = () => import('@/pages/register/RegisterPage.vue')
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -10,9 +11,14 @@ export const routes: RouteRecordRaw[] = [
     component: LoginPage,
   },
   {
+    path: '/register',
+    name: 'register',
+    component: RegisterPage,
+  },
+  {
     path: '/',
     name: 'main',
-    component: HomePage,
+    component: MainPage,
     meta: { requiresAuth: true },
   },
 ]

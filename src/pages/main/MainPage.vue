@@ -3,12 +3,14 @@
 </script>
 
 <template>
-  <header class="header">
-    шапка
-  </header>
-  <main class="main">
-    главная
-  </main>
+  <div class="main-page">
+    <header class="header">
+      шапка
+    </header>
+    <main class="main">
+      главная
+    </main>
+  </div>
 </template>
 
 <style lang="scss" scoped>

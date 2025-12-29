@@ -9,13 +9,12 @@ export const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next({ name: 'login', query: { redirect: to.fullPath } })
+    next({ name: 'login' })
     return
   }
 
-  if (to.name === 'Login' && authStore.isAuthenticated) {
+  if ((to.name === 'login' || to.name === 'register') && authStore.isAuthenticated) {
     next({ name: 'main' })
     return
   }

@@ -5,37 +5,39 @@ import { useAuthStore } from '@/features/auth/model/authStore'
 import ButtonText from '@/shared/ui/ButtonText.vue'
 import InputDefault from '@/shared/ui/InputDefault.vue'
 
-const form = ref<{ email?: string, password?: string }>({})
+const form = ref<{ name?: string, email?: string, password?: string }>({})
 const authStore = useAuthStore()
 const router = useRouter()
 
-function redirectToRegister() {
-  router.push({ name: 'register' })
+function redirectToLogin() {
+  router.push({ name: 'login' })
 }
 
-async function onSubmit(e: Event) {
+function onSubmit(e: Event) {
   e.preventDefault()
-  if (!form.value.email || !form.value.password) {
+  if (!form.value.name || !form.value.email || !form.value.password) {
     return
   }
-  try {
-    await authStore.login(form.value.email, form.value.password)
-    router.push({ name: 'main' })
-    form.value = {}
-  }
-  catch (error) {
-    console.error('Login error:', error)
-  }
+  authStore.login(form.value.email, form.value.password)
+  form.value = {}
 }
 </script>
 
 <template>
-  <div class="login-page">
-    <section class="login">
-      <h4 class="login__title">
-        Вход
+  <div class="register-page">
+    <section class="register">
+      <h4 class="register__title">
+        Регистрация
       </h4>
-      <form class="login__form" @submit="onSubmit">
+      <form class="register__form" @submit="onSubmit">
+        <InputDefault
+          v-model="form.name"
+          type="name"
+          inputmode="text"
+          name="name"
+          autocomplete="name"
+          placeholder="Имя"
+        />
         <InputDefault
           v-model="form.email"
           type="email"
@@ -52,16 +54,24 @@ async function onSubmit(e: Event) {
           autocomplete="current-password"
           placeholder="Пароль"
         />
+        <InputDefault
+          v-model="form.password"
+          type="password"
+          inputmode="text"
+          name="password"
+          autocomplete="current-password"
+          placeholder="Повторите пароль"
+        />
         <ButtonText type="submit">
           <span class="submit-button__text">Вход</span>
         </ButtonText>
-        <button class="register-button" type="button" @click="redirectToRegister">
-          Нет аккаунта? Зарегистрироваться
+        <button class="register-button" type="button" @click="redirectToLogin">
+          Есть аккаунт? Войти
         </button>
       </form>
     </section>
-    <h1 class="login-page__title">
-      JobTrack!
+    <h1 class="register-page__title">
+      Добро пожаловать!
     </h1>
   </div>
 </template>
@@ -69,16 +79,17 @@ async function onSubmit(e: Event) {
 <style lang="scss" scoped>
 @use '@/shared/assets/styles/helpers' as *;
 
-.login-page {
+.register-page {
   min-height: 100vh;
   @include flex-center;
-  gap: fluid-to-laptop(200,50);
+  gap: fluid-to-laptop(100,50);
 
   @include mobile {
     flex-direction: column;
   }
 
   &__title {
+    max-width: 300px;
     order: 3;
 
     @include mobile {
@@ -87,7 +98,7 @@ async function onSubmit(e: Event) {
   }
 }
 
-.login {
+.register {
   width: 100%;
   max-width: fluid(500,390);
   padding: var(--container-padding-x) var(--container-padding-x);
@@ -97,6 +108,7 @@ async function onSubmit(e: Event) {
   &__title {
     text-align: left;
   }
+
   &__form {
     display: flex;
     flex-direction: column;
