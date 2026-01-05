@@ -17,8 +17,8 @@ html {
 
 body {
   @include fluid-text(18, 14);
-  margin: 20px 20px;
   min-height: 100vh;
+  margin: 0;
   display: flex;
   flex-direction: column;
   font-family: var(--font-family-base);

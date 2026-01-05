@@ -114,6 +114,10 @@ function onSubmit(e: Event) {
     flex-direction: column;
     gap: fluid(20,14)
   }
+
+    @include mobile {
+    width: calc(100% - 2 * var(--container-padding-x));
+  }
 }
 
 .submit-button__text {

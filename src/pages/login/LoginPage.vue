@@ -13,6 +13,10 @@ function redirectToRegister() {
   router.push({ name: 'register' })
 }
 
+function redirectToChangePassword() {
+  router.push({ name: 'changePassword' })
+}
+
 async function onSubmit(e: Event) {
   e.preventDefault()
   if (!form.value.email || !form.value.password) {
@@ -52,6 +56,9 @@ async function onSubmit(e: Event) {
           autocomplete="current-password"
           placeholder="Пароль"
         />
+        <button class="password-button" type="button" @click="redirectToChangePassword">
+          Забыли пароль?
+        </button>
         <ButtonText type="submit">
           <span class="submit-button__text">Вход</span>
         </ButtonText>
@@ -102,6 +109,9 @@ async function onSubmit(e: Event) {
     flex-direction: column;
     gap: fluid(20,14)
   }
+  @include mobile {
+    width: calc(100% - 2 * var(--container-padding-x));
+  }
 }
 
 .submit-button__text {
@@ -110,7 +120,8 @@ async function onSubmit(e: Event) {
   @include fluid-text(24, 16);
 }
 
-.register-button {
+.register-button,
+.password-button {
   border: none;
   background-color: transparent;
   color: var(--color-gray-55);
@@ -119,5 +130,11 @@ async function onSubmit(e: Event) {
   &:hover {
     color: var(--color-black);
   }
+}
+
+.password-button {
+  align-self: flex-end;
+  text-align: right;
+  width: 50%
 }
 </style>

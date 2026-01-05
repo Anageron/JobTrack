@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router'
 const MainPage = () => import('@/pages/main/MainPage.vue')
 const LoginPage = () => import('@/pages/login/LoginPage.vue')
 const RegisterPage = () => import('@/pages/register/RegisterPage.vue')
+const ChangePassword = () => import('@/pages/changePassword/changePassword.vue')
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -14,6 +15,11 @@ export const routes: RouteRecordRaw[] = [
     path: '/register',
     name: 'register',
     component: RegisterPage,
+  },
+  {
+    path: '/changePassword',
+    name: 'changePassword',
+    component: ChangePassword,
   },
   {
     path: '/',
