@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/features/auth/model/authStore'
 import ButtonText from '@/shared/ui/ButtonText.vue'
@@ -8,6 +8,12 @@ import InputDefault from '@/shared/ui/InputDefault.vue'
 const form = ref<{ email?: string, password?: string }>({})
 const authStore = useAuthStore()
 const router = useRouter()
+
+watch(() => [form.value.email, form.value.password], () => {
+  if (authStore.loginError) {
+    authStore.clearLoginError()
+  }
+}, { deep: true })
 
 function redirectToRegister() {
   router.push({ name: 'register' })
@@ -28,7 +34,7 @@ async function onSubmit(e: Event) {
     form.value = {}
   }
   catch (error) {
-    console.error('Login error:', error)
+    console.error('Login failed:', error)
   }
 }
 </script>
@@ -39,6 +45,7 @@ async function onSubmit(e: Event) {
       <h4 class="login__title">
         Вход
       </h4>
+
       <form class="login__form" @submit="onSubmit">
         <InputDefault
           v-model="form.email"
@@ -56,9 +63,18 @@ async function onSubmit(e: Event) {
           autocomplete="current-password"
           placeholder="Пароль"
         />
-        <button class="password-button" type="button" @click="redirectToChangePassword">
-          Забыли пароль?
-        </button>
+        <div class="login__footer">
+          <div class="login__error-placeholder">
+            <Transition name="error">
+              <div v-if="authStore.loginError" class="login__error">
+                {{ authStore.loginError }}
+              </div>
+            </Transition>
+          </div>
+          <button class="password-button" type="button" @click="redirectToChangePassword">
+            Забыли пароль?
+          </button>
+        </div>
         <ButtonText type="submit">
           <span class="submit-button__text">Вход</span>
         </ButtonText>
@@ -132,9 +148,29 @@ async function onSubmit(e: Event) {
   }
 }
 
+.login__footer {
+  display: flex;
+  justify-content: space-between;
+}
+
 .password-button {
-  align-self: flex-end;
   text-align: right;
-  width: 50%
+}
+
+.login__error {
+  text-align: left;
+  color:  var(--color-red);
+  font-size: 14px;
+  transition: 0.3s ;
+}
+
+.error-enter-active,
+.error-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.error-enter-from,
+.error-leave-to {
+  opacity: 0;
 }
 </style>

@@ -1,19 +1,15 @@
 import type { IUser } from '../types/user'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { client } from '@/shared/api/client'
+import { API_ROUTES } from '@/shared/api/routes'
 
 export const useUserStore = defineStore('user', () => {
-  const profile = ref<IUser>()
+  const profile = ref<IUser | null>(null)
 
   async function fetchUser() {
-    // TODO раскоментировать когда будет готово апи
-    //  const { data } = await client().get<IUser>(API_ROUTES.auth.profile)
-    const mockProfile: IUser = {
-      id: 'user-1',
-      email: 'test@test.com',
-      name: 'Anageron',
-    }
-    profile.value = mockProfile
+    const response = await client.get<IUser>(API_ROUTES.users.info)
+    profile.value = response.data
   }
 
   return { profile, fetchUser }

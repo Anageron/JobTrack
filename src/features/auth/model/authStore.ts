@@ -1,68 +1,47 @@
+import type { ILoginResponse } from '@/shared/api/types/auth'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useUserStore } from '@/entities/user/model/userStore'
-import { deleteCookie, getCookie, getCookieOptions, setCookie } from '@/shared/lib/cookies'
-
-const COOKIE_NAME = 'jobtrack_session'
+import { client } from '@/shared/api/client'
+import { API_ROUTES } from '@/shared/api/routes'
 
 export const useAuthStore = defineStore('auth', () => {
-  // TODO раскоментировать когда будет готово апи
-  //   const token = ref<string>()
-  //   const initalValue = getCookie(COOKIE_NAME)
-
-  const isAuthenticated = ref(false)
-  const cookie = getCookie(COOKIE_NAME)
-  if (cookie === 'true') {
-    isAuthenticated.value = true
-  }
-
-  function setAuthenticated(value: boolean) {
-    isAuthenticated.value = value
-    if (value) {
-      setCookie(COOKIE_NAME, 'true', getCookieOptions())
-    }
-    else {
-      deleteCookie(COOKIE_NAME)
-    }
-  }
+  // Токен храним в памяти
+  const token = ref<string | null>(null)
+  const loginError = ref<string | null>(null)
+  const isAuthenticated = computed(() => !!token.value)
 
   async function login(email: string, password: string) {
-    if (password !== '123') {
-      throw new Error('Неверный пароль')
+    loginError.value = null // сброс ошибки перед попыткой
+    try {
+      const response = await client.post<ILoginResponse>(API_ROUTES.users.login, {
+        email,
+        password,
+      })
+      token.value = response.data.jwt
+      const userStore = useUserStore()
+      await userStore.fetchUser()
     }
-    setAuthenticated(true)
-    const userStore = useUserStore()
-    await userStore.fetchUser()
+    catch (error: any) {
+      if (error.response?.status === 401) {
+        loginError.value = 'Неверный email или пароль'
+      }
+      else {
+        loginError.value = 'Ошибка сервера. Попробуйте позже.'
+      }
+      throw error
+    }
   }
+
+  function clearLoginError() {
+    loginError.value = null
+  }
+
   function logout() {
-    setAuthenticated(false)
+    token.value = null
     const userStore = useUserStore()
     userStore.$reset()
   }
-  // TODO раскоментировать когда будет готово апи
-  //
-  // if (initalValue) {
-  //   token.value = initalValue
-  // }
 
-  // function setToken(newToken: string) {
-  //   token.value = newToken
-  //   setCookie(COOKIE_NAME, newToken)
-  // }
-  // // TODO раскоментировать когда будет готово апи
-  // //   const getToken = computed(() => token.value)
-
-  // async function login(email: string, password: string) {
-  //   const { data } = await client().post<ILoginResponse>(API_ROUTES.auth.login, {
-  //     email,
-  //     password,
-  //   })
-  //   setToken(data.token)
-  // }
-
-  // function logout() {
-  //   token.value = undefined
-  //   deleteCookie(COOKIE_NAME)
-  // }
-  return { isAuthenticated, login, logout }
+  return { token, isAuthenticated, loginError, clearLoginError, login, logout }
 })
